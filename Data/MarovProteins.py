@@ -19,7 +19,7 @@ def createDataBase():
     connection.close()
 
 def step(line,file):
-    return Protein(line, file.readline(), file.readline())
+    return Protein(line.rstrip(), file.readline().rstrip(), file.readline().rstrip())
 
 def readFile(fileName,cursor, jsonList):
     with fileName.open() as file:
