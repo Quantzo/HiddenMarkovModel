@@ -6,7 +6,27 @@ class Protein:
     def __init__(self, id, firstStructure, secondaryStructure):
         self.id = id
         self.firstStructure = firstStructure
-        self.secondaryStructure = secondaryStructure
+        self.secondaryStructure = self.__alterSecondaryStructure__(secondaryStructure)
+
+    def __replaceMultipleChars__(self, str, chars, newValue):
+        for c in chars:
+            if c in str:
+                str = str.replace(c, newValue)
+        return str
+
+    def __alterSecondaryStructure__(self, str):
+        helixes = "GI"
+        strands = "E"
+        coils = "-ST"
+        str = self.__replaceMultipleChars__(str, helixes, 'H')
+        str = self.__replaceMultipleChars__(str, strands, 'B')
+        str = self.__replaceMultipleChars__(str, coils, 'C')
+        return str
+
+
+                    
+
+
 
 def addToDatabase(object, cur):
     cur.execute("insert into proteins values(:id, :firstStructure, :secondaryStructure)", object)
