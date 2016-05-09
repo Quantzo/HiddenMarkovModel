@@ -58,11 +58,11 @@ def checkIfDataBaseExist():
     dataBase = Path('proteins.db')
     return dataBase.exists()
 
-def readFiles():
+def readFiles(path):
 
     if(not checkIfDataBaseExist()):
         createDataBase()
-    dir = Path('Proteins')
+    dir = Path(path)
     files = list(dir.glob('**/*.txt'))
     
     connection = sqlite3.connect('proteins.db')
@@ -84,5 +84,5 @@ def readFiles():
 
 
 
-readFiles()
+readFiles('Proteins/1')
 
