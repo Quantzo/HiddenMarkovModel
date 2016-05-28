@@ -4,6 +4,26 @@
 x <- train(Markov, observationTraining[1:15000], 100)
 evaluateDataSet(testSet, x$hmm)
 ```
+##Tests
+
+> - Test 1 : Uniform Growth test, where n = <1,16>
+
+> | Helix states number | Strand states number | Coil states number | 
+| ------------------- | -------------------- | ------------------ |
+| n | n | n |
+
+> - Test 2 : Uniform Growth test with constant number of Helixes states, where n = <9,15>
+
+> | Helix states number | Strand states number | Coil states number | 
+| ------------------- | -------------------- | ------------------ |
+| 13 | n | n |
+
+> - Test 2 : Uniform Growth test with constant number of Helixes and Strands, where n = <?,?>
+
+> | Helix states number | Strand states number | Coil states number | 
+| ------------------- | -------------------- | ------------------ |
+| 13 | ? | n |
+
 ##Results
 #####Uniform growth model
 > - Uniform starting probability
@@ -12,7 +32,7 @@ evaluateDataSet(testSet, x$hmm)
 - Train data sets observation number : 518 550
 - Used observartions : 15 000
 
-| Helix states number | Strand states number | Coil statas number | Result |
+| Helix states number | Strand states number | Coil states number | Result |
 | ------------------- | -------------------- | ------------------ | ------ |
 | 1 | 1 | 1 | 0.3401149 |
 | 2 | 2 | 2 | 0.3805153 |
