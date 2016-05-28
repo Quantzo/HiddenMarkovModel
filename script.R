@@ -214,4 +214,85 @@ calculateQ3 <- function(resultOfTestIteration) {
     return(result)
 }
 
+performUniformGrowthWithConstHelixes <- function(testSet, symbols, learningObservations, maxStatesNumber, helixesNumber, minStatesNumber = 1, learningIterations = 100, numberOfCores = 1, modelInitialStartProbs = TRUE, modelInitialTransProbs = TRUE, modelInitialEmissionProbs = TRUE){
+    cl <- initializeCluster(numberOfCores)
+     testResults <- foreach(i = minStatesNumber:maxStatesNumber, .combine = 'cbind', .export = c('uniformGrowthTestEntry', 'generateAllStatesVector', 'generateStateVector', 'train', 'evaluateDataSet', 'evaluateEntry', 'numberOfStates', 'correctPositions', 'predictHmm', 'cleanResultsVector', 'combineEntriesResult'), .packages = c("HMM", "foreach", "doParallel")) %dopar% {
+        uniformGrowthTestEntryWithConstHelixes(i, symbols, learningObservations, helixesNumber, testSet, modelInitialStartProbs, modelInitialTransProbs, modelInitialEmissionProbs, learningIterations)
+     }
 
+    stopCluster(cl)
+    return(testResults)   
+}
+
+uniformGrowthTestEntryWithConstHelixes <- function(numberOfStates, symbols, helixesNumber, learningObservations, testSet, modelInitialStartProbs, modelInitialTransProbs , modelInitialEmissionProbs , learningIterations) {
+    prob <- function(x) {
+        x / sum(x)
+        }
+
+    startProbs <- NULL
+    transProbsMatrix <- NULL
+    emissionProbsMatrix <- NULL
+
+    states <- c(generateStateVector("H", helixesNumber), generateStateVector("C", numberOfStates), generateStateVector("B", numberOfStates))
+
+    if (modelInitialStartProbs) {
+        startProbs <- prob(runif(length(states)))
+    }
+    if (modelInitialEmissionProbs) {
+        emissionProbsMatrix <- apply(matrix(runif(length(states) * length(symbols)), nrow = length(states), ncol = length(symbols)), 1, prob)
+    }
+    if (modelInitialTransProbs) {
+        transProbsMatrix <- apply(matrix(runif(length(states) * length(states)), nrow = length(states), ncol = length(states)), 1, prob)
+    }
+
+
+    initializedModel <- initHMM(States = states, Symbols = symbols, startProbs = startProbs, transProbs = transProbsMatrix, emissionProbs = emissionProbsMatrix)
+    trainedModel <- train(initializedModel, learningObservations, learningIterations)
+    result <- evaluateDataSet(testSet, trainedModel$hmm)
+    result$TestType <- "Uniform Growth with Constant Helixes Number"
+	result$HelixesNumber <- helixesNumber
+    result$NumberOfStates <- numberOfStates
+    return(result)
+}
+
+performUniformGrowthWithConstHelixesAndStrands <- function(testSet, symbols, learningObservations, maxStatesNumber, helixesNumber, strandsNumber, minStatesNumber = 1, learningIterations = 100, numberOfCores = 1, modelInitialStartProbs = TRUE, modelInitialTransProbs = TRUE, modelInitialEmissionProbs = TRUE){
+    cl <- initializeCluster(numberOfCores)
+     testResults <- foreach(i = minStatesNumber:maxStatesNumber, .combine = 'cbind', .export = c('uniformGrowthTestEntry', 'generateAllStatesVector', 'generateStateVector', 'train', 'evaluateDataSet', 'evaluateEntry', 'numberOfStates', 'correctPositions', 'predictHmm', 'cleanResultsVector', 'combineEntriesResult'), .packages = c("HMM", "foreach", "doParallel")) %dopar% {
+        uniformGrowthTestEntryWithConstHelixesAndStrands(i, symbols, learningObservations, helixesNumber, strandsNumber, testSet, modelInitialStartProbs, modelInitialTransProbs, modelInitialEmissionProbs, learningIterations)
+     }
+
+    stopCluster(cl)
+    return(testResults)   
+}
+
+uniformGrowthTestEntryWithConstHelixesAndStrands <- function(numberOfStates, symbols, helixesNumber, strandsNumber, learningObservations, testSet, modelInitialStartProbs, modelInitialTransProbs , modelInitialEmissionProbs , learningIterations) {
+    prob <- function(x) {
+        x / sum(x)
+        }
+
+    startProbs <- NULL
+    transProbsMatrix <- NULL
+    emissionProbsMatrix <- NULL
+
+    states <- c(generateStateVector("H", helixesNumber), generateStateVector("C", numberOfStates), generateStateVector("B", strandsNumber))
+
+    if (modelInitialStartProbs) {
+        startProbs <- prob(runif(length(states)))
+    }
+    if (modelInitialEmissionProbs) {
+        emissionProbsMatrix <- apply(matrix(runif(length(states) * length(symbols)), nrow = length(states), ncol = length(symbols)), 1, prob)
+    }
+    if (modelInitialTransProbs) {
+        transProbsMatrix <- apply(matrix(runif(length(states) * length(states)), nrow = length(states), ncol = length(states)), 1, prob)
+    }
+
+
+    initializedModel <- initHMM(States = states, Symbols = symbols, startProbs = startProbs, transProbs = transProbsMatrix, emissionProbs = emissionProbsMatrix)
+    trainedModel <- train(initializedModel, learningObservations, learningIterations)
+    result <- evaluateDataSet(testSet, trainedModel$hmm)
+    result$TestType <- "Uniform Growth with Constant Helixes and Strands Number"
+	result$HelixesNumber <- helixesNumber
+	result$StrandsNUmber <- strandsNumber
+    result$CoilsNumber <- numberOfStates
+    return(result)
+}
