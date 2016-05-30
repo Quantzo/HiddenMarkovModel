@@ -216,7 +216,7 @@ calculateQ3 <- function(resultOfTestIteration) {
 
 performUniformGrowthWithConstHelixes <- function(testSet, symbols, learningObservations, maxStatesNumber, helixesNumber, minStatesNumber = 1, learningIterations = 100, numberOfCores = 1, modelInitialStartProbs = TRUE, modelInitialTransProbs = TRUE, modelInitialEmissionProbs = TRUE){
     cl <- initializeCluster(numberOfCores)
-     testResults <- foreach(i = minStatesNumber:maxStatesNumber, .combine = 'cbind', .export = c('uniformGrowthTestEntry', 'generateAllStatesVector', 'generateStateVector', 'train', 'evaluateDataSet', 'evaluateEntry', 'numberOfStates', 'correctPositions', 'predictHmm', 'cleanResultsVector', 'combineEntriesResult'), .packages = c("HMM", "foreach", "doParallel")) %dopar% {
+     testResults <- foreach(i = minStatesNumber:maxStatesNumber, .combine = 'cbind', .export = c('uniformGrowthTestEntryWithConstHelixes', 'generateAllStatesVector', 'generateStateVector', 'train', 'evaluateDataSet', 'evaluateEntry', 'numberOfStates', 'correctPositions', 'predictHmm', 'cleanResultsVector', 'combineEntriesResult'), .packages = c("HMM", "foreach", "doParallel")) %dopar% {
         uniformGrowthTestEntryWithConstHelixes(i, symbols, learningObservations, helixesNumber, testSet, modelInitialStartProbs, modelInitialTransProbs, modelInitialEmissionProbs, learningIterations)
      }
 
@@ -224,7 +224,7 @@ performUniformGrowthWithConstHelixes <- function(testSet, symbols, learningObser
     return(testResults)   
 }
 
-uniformGrowthTestEntryWithConstHelixes <- function(numberOfStates, symbols, helixesNumber, learningObservations, testSet, modelInitialStartProbs, modelInitialTransProbs , modelInitialEmissionProbs , learningIterations) {
+uniformGrowthTestEntryWithConstHelixes <- function(numberOfStates, symbols, learningObservations, helixesNumber, testSet, modelInitialStartProbs, modelInitialTransProbs, modelInitialEmissionProbs, learningIterations) {
     prob <- function(x) {
         x / sum(x)
         }
@@ -257,7 +257,7 @@ uniformGrowthTestEntryWithConstHelixes <- function(numberOfStates, symbols, heli
 
 performUniformGrowthWithConstHelixesAndStrands <- function(testSet, symbols, learningObservations, maxStatesNumber, helixesNumber, strandsNumber, minStatesNumber = 1, learningIterations = 100, numberOfCores = 1, modelInitialStartProbs = TRUE, modelInitialTransProbs = TRUE, modelInitialEmissionProbs = TRUE){
     cl <- initializeCluster(numberOfCores)
-     testResults <- foreach(i = minStatesNumber:maxStatesNumber, .combine = 'cbind', .export = c('uniformGrowthTestEntry', 'generateAllStatesVector', 'generateStateVector', 'train', 'evaluateDataSet', 'evaluateEntry', 'numberOfStates', 'correctPositions', 'predictHmm', 'cleanResultsVector', 'combineEntriesResult'), .packages = c("HMM", "foreach", "doParallel")) %dopar% {
+     testResults <- foreach(i = minStatesNumber:maxStatesNumber, .combine = 'cbind', .export = c('uniformGrowthTestEntryWithConstHelixesAndStrands', 'generateAllStatesVector', 'generateStateVector', 'train', 'evaluateDataSet', 'evaluateEntry', 'numberOfStates', 'correctPositions', 'predictHmm', 'cleanResultsVector', 'combineEntriesResult'), .packages = c("HMM", "foreach", "doParallel")) %dopar% {
         uniformGrowthTestEntryWithConstHelixesAndStrands(i, symbols, learningObservations, helixesNumber, strandsNumber, testSet, modelInitialStartProbs, modelInitialTransProbs, modelInitialEmissionProbs, learningIterations)
      }
 
@@ -265,7 +265,7 @@ performUniformGrowthWithConstHelixesAndStrands <- function(testSet, symbols, lea
     return(testResults)   
 }
 
-uniformGrowthTestEntryWithConstHelixesAndStrands <- function(numberOfStates, symbols, helixesNumber, strandsNumber, learningObservations, testSet, modelInitialStartProbs, modelInitialTransProbs , modelInitialEmissionProbs , learningIterations) {
+uniformGrowthTestEntryWithConstHelixesAndStrands <- function(numberOfStates, symbols, learningObservations, helixesNumber, strandsNumber, testSet, modelInitialStartProbs, modelInitialTransProbs, modelInitialEmissionProbs, learningIterations) {
     prob <- function(x) {
         x / sum(x)
         }
