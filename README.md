@@ -10,19 +10,19 @@ evaluateDataSet(testSet, x$hmm)
 
 > | Helix states number | Strand states number | Coil states number | 
 | ------------------- | -------------------- | ------------------ |
-| n | n | n |
+| 13 | 13 | 13 |
 
-> - Test 2 : Uniform Growth test with constant number of Helixes states, where n = <9,15>
-
-> | Helix states number | Strand states number | Coil states number | 
-| ------------------- | -------------------- | ------------------ |
-| 13 | n | n |
-
-> - Test 2 : Uniform Growth test with constant number of Helixes and Strands, where n = <?,?>
+> - Test 2 : Uniform Growth test with constant number of Helixes states, where n = <7,15>
 
 > | Helix states number | Strand states number | Coil states number | 
 | ------------------- | -------------------- | ------------------ |
-| 13 | ? | n |
+| 13 | 14 | 14 |
+
+> - Test 2 : Uniform Growth test with constant number of Helixes and Strands, where n = <10,18>
+
+> | Helix states number | Strand states number | Coil states number | 
+| ------------------- | -------------------- | ------------------ |
+| 13 | 14 | n |
 
 ##Results
 #####Uniform growth model
