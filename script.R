@@ -296,3 +296,11 @@ uniformGrowthTestEntryWithConstHelixesAndStrands <- function(numberOfStates, sym
     result$CoilsNumber <- numberOfStates
     return(result)
 }
+
+
+test2 <- function() {
+     x <- performUniformGrowthWithConstHelixesAndStrands(testSet, AminoAcidSymbols, observationTraining[1:7000], 18, 13, 14, minStatesNumber = 10, learningIterations = 50, numberOfCores = 8)
+    saveTestResultToFile(x, "uniformGrowthConstHelixesAndStrands.csv")
+    saveTestResultToFile(q3Score(x), "uniformGrowthConstHelixesAndStrandsQ3.csv")
+    return(x)
+}
