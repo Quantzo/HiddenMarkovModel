@@ -129,6 +129,37 @@ evaluateDataSet <- function(dataSet, model) {
     }
     return(results)
 }
+#############Helper functions#############
+q3Score <- function(resultsOfTest) {
+    testResults <- foreach(i = 1:ncol(resultsOfTest), .combine = 'cbind', .export = c('calculateQ3')) %do% {
+        calculateQ3(resultsOfTest[,i])
+        }
+    return(testResults)
+}
+
+calculateQ3 <- function(resultOfTestIteration) {
+    result <- list()
+
+    result$TotalQ3 <- resultOfTestIteration$CorrectNumber / resultOfTestIteration$TotalNumber
+    result$HelixesQ3 <- resultOfTestIteration$CorrectHelixesNumber / resultOfTestIteration$TotalHelixesNumber
+    result$StrandsQ3 <- resultOfTestIteration$CorrectStrandsNumber / resultOfTestIteration$TotalStrandsNumber
+    result$CoilsQ3 <- resultOfTestIteration$CorrectCoilsNumber / resultOfTestIteration$TotalCoilsNumber
+    result$TestType <- resultOfTestIteration$TestType
+    result$NumberOfStates <- resultOfTestIteration$NumberOfStates
+    return(result)
+}
+
+saveTestResultToFile <- function(result, fileName) {
+    write.table(t(result), file = fileName, row.names = FALSE, na = "", col.names = TRUE, sep = ",")
+}
+
+generateAllStatesVector <- function(numberOfStates = 0, helixNumber = numberOfStates, strandNumber = numberOfStates, coilNumber = numberOfStates) {
+    return(c(generateStateVector("H", helixNumber), generateStateVector("B", strandNumber), generateStateVector("C", coilNumber)))
+}
+
+generateStateVector <- function(symbol, numberOfStates) {
+    return(paste(symbol, seq(1:numberOfStates), sep=""))
+}
 
 #############Testing functions#############
 performUniformGrowthTest <- function(testSet, symbols, learningObservations, maxStatesNumber, minStatesNumber = 1, learningIterations = 100, numberOfCores = 1, modelInitialStartProbs = FALSE, modelInitialTransProbs = FALSE, modelInitialEmissionProbs = FALSE) {
@@ -140,15 +171,6 @@ performUniformGrowthTest <- function(testSet, symbols, learningObservations, max
     stopCluster(cl)
     return(testResults)    
 }
-
-generateAllStatesVector <- function(numberOfStates = 0, helixNumber = numberOfStates, strandNumber = numberOfStates, coilNumber = numberOfStates) {
-    return(c(generateStateVector("H", helixNumber), generateStateVector("B", strandNumber), generateStateVector("C", coilNumber)))
-}
-
-generateStateVector <- function(symbol, numberOfStates) {
-    return(paste(symbol, seq(1:numberOfStates), sep=""))
-}
-
 
 uniformGrowthTestEntry <- function(numberOfStates, symbols, learningObservations, testSet, modelInitialStartProbs, modelInitialTransProbs , modelInitialEmissionProbs , learningIterations) {
     prob <- function(x) {
@@ -177,29 +199,6 @@ uniformGrowthTestEntry <- function(numberOfStates, symbols, learningObservations
     result <- evaluateDataSet(testSet, trainedModel$hmm)
     result$TestType <- "Uniform Growth"
     result$NumberOfStates <- numberOfStates
-    return(result)
-}
-
-saveTestResultToFile <- function(result, fileName) {
-    write.table(t(result), file = fileName, row.names = FALSE, na = "", col.names = TRUE, sep = ",")
-}
-
-q3Score <- function(resultsOfTest) {
-    testResults <- foreach(i = 1:ncol(resultsOfTest), .combine = 'cbind', .export = c('calculateQ3')) %do% {
-        calculateQ3(resultsOfTest[,i])
-        }
-    return(testResults)
-}
-
-calculateQ3 <- function(resultOfTestIteration) {
-    result <- list()
-
-    result$TotalQ3 <- resultOfTestIteration$CorrectNumber / resultOfTestIteration$TotalNumber
-    result$HelixesQ3 <- resultOfTestIteration$CorrectHelixesNumber / resultOfTestIteration$TotalHelixesNumber
-    result$StrandsQ3 <- resultOfTestIteration$CorrectStrandsNumber / resultOfTestIteration$TotalStrandsNumber
-    result$CoilsQ3 <- resultOfTestIteration$CorrectCoilsNumber / resultOfTestIteration$TotalCoilsNumber
-    result$TestType <- resultOfTestIteration$TestType
-    result$NumberOfStates <- resultOfTestIteration$NumberOfStates
     return(result)
 }
 
@@ -280,15 +279,15 @@ uniformGrowthTestEntryWithConstHelixesAndStrands <- function(numberOfStates, sym
     trainedModel <- train(initializedModel, learningObservations, learningIterations)
     result <- evaluateDataSet(testSet, trainedModel$hmm)
     result$TestType <- "Uniform Growth with Constant Helixes and Strands Number"
-	result$HelixesNumber <- helixesNumber
-	result$StrandsNUmber <- strandsNumber
-    result$CoilsNumber <- numberOfStates
+    result$HelixesNumber <- helixesNumber
+    result$StrandsNumber <- strandsNumber
+    result$NumberOfStates <- numberOfStates
     return(result)
 }
 
-
+#############Sample#############
 test2 <- function() {
-     x <- performUniformGrowthWithConstHelixesAndStrands(testSet, AminoAcidSymbols, observationTraining[1:7000], 18, 13, 14, minStatesNumber = 10, learningIterations = 50, numberOfCores = 8)
+     x <- performUniformGrowthWithConstHelixesAndStrands(testSet, AminoAcidSymbols, observationVecTraining[1:7000], 18, 13, 14, minStatesNumber = 10, learningIterations = 50, numberOfCores = 8)
     saveTestResultToFile(x, "uniformGrowthConstHelixesAndStrands.csv")
     saveTestResultToFile(q3Score(x), "uniformGrowthConstHelixesAndStrandsQ3.csv")
     return(x)
