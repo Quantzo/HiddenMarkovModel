@@ -162,7 +162,7 @@ generateStateVector <- function(symbol, numberOfStates) {
 }
 
 #############Testing functions#############
-performUniformGrowthTest <- function(testSet, symbols, learningObservations, maxStatesNumber, minStatesNumber = 1, learningIterations = 100, numberOfCores = 1, modelInitialStartProbs = FALSE, modelInitialTransProbs = FALSE, modelInitialEmissionProbs = FALSE) {
+performUniformGrowthTest <- function(testSet, symbols, learningObservations, maxStatesNumber, minStatesNumber = 1, learningIterations = 100, numberOfCores = 1, modelInitialStartProbs = TRUE, modelInitialTransProbs = TRUE, modelInitialEmissionProbs = TRUE) {
     cl <- initializeCluster(numberOfCores)
      testResults <- foreach(i = minStatesNumber:maxStatesNumber, .combine = 'cbind', .export = c('uniformGrowthTestEntry', 'generateAllStatesVector', 'generateStateVector', 'train', 'evaluateDataSet', 'evaluateEntry', 'numberOfStates', 'correctPositions', 'predictHmm', 'cleanResultsVector', 'combineEntriesResult'), .packages = c("HMM", "foreach", "doParallel")) %dopar% {
         uniformGrowthTestEntry(i, symbols, learningObservations, testSet, modelInitialStartProbs, modelInitialTransProbs, modelInitialEmissionProbs, learningIterations)
